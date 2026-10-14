@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Telltale Debrief manual</title>
+    <!-- Served beside the Debrief page (scripts/build-web.sh copies it into dist/) and opened
+         from its side panel. Every name in quotes or in bold is the string the page shows. -->
+    <style>
+      :root {
+        --bg: #fbfbf9; --fg: #1d1d1b; --muted: #5d5d58; --rule: #deded8; --key: #efefea;
+        --accent: #0b5d8f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1b1b1b; --fg: #e8e8e4; --muted: #a3a39d; --rule: #3a3a37; --key: #2c2c2a;
+          --accent: #6db7e8;
+        }
+      }
+      html { background: var(--bg); }
+      body {
+        margin: 0 auto; max-width: 46rem; padding: 2rem 1rem 4rem;
+        font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--fg);
+      }
+      h1 { font-size: 1.6rem; margin: 0 0 0.25rem; }
+      h2 { font-size: 1.2rem; margin: 2.2rem 0 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--rule); }
+      h3 { font-size: 1rem; margin: 1.4rem 0 0.4rem; }
+      p, li { margin: 0.35rem 0; }
+      ol, ul { padding-left: 1.3rem; }
+      .lead { color: var(--muted); margin-bottom: 1.2rem; }
+      b { font-weight: 600; }
+      kbd {
+        font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--key);
+        border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 4px; padding: 0 0.3em;
+        white-space: nowrap;
+      }
+      dl { margin: 0.4rem 0; }
+      dt { font-weight: 600; margin-top: 0.6rem; }
+      dd { margin: 0.1rem 0 0 1.2rem; }
+      /* Wide enough: what you do and what it does on one line. */
+      @media (min-width: 640px) {
+        dl { display: grid; grid-template-columns: 15rem 1fr; column-gap: 1rem; row-gap: 0.45rem; }
+        dt, dd { margin: 0; }
+      }
+      a { color: var(--accent); }
+      .note { color: var(--muted); font-size: 0.93em; }
+    </style>
+  </head>
+  <body>
+    <h1>Telltale Debrief</h1>
+    <p class="lead">How to use the page: the workflow, then what the mouse and the keys do.</p>
+
+    <p>
+      Debrief reads GRATIA's Expedition log and turns it into a debrief: findings, figures and a
+      PDF. It runs in this browser tab. Your files are read here and are never uploaded. The one
+      exception is <b>Fetch wind map</b>: it asks Open-Meteo and OpenStreetMap for the weather and
+      the coastline of the race area on that day, and sends nothing of the log.
+    </p>
+    <p class="note">
+      It needs a browser with WebGPU: Chrome, Edge, or Safari 18 or later. Setup and Sailing are in
+      the desktop app. On Windows and Linux, read <kbd>Ctrl</kbd> wherever this says <kbd>Cmd</kbd>.
+    </p>
+
+    <h2>The workflow</h2>
+
+    <h3>1. Open the logs</h3>
+    <ul>
+      <li>
+        <b>One log:</b> click <b>Load log…</b> and pick the Expedition <code>.csv</code>. The page
+        makes a regatta file for it, <code>regatta.toml</code>, holding what the log proposes: a race
+        from each countdown, the start line's ends from the pings. Each proposal is shown with a
+        "?" until you accept it.
+      </li>
+      <li>
+        <b>A whole regatta:</b> click <b>Open regatta…</b> and pick the folder holding
+        <code>regatta.toml</code> and the day logs, with its <code>wind</code> folder if the desktop
+        app fetched one. The last day opens. The days are listed under the regatta file; click one
+        to open its log. <b>Load log…</b> adds another day to the regatta file that is open.
+      </li>
+    </ul>
+    <p class="note">
+      The regatta file names each day's log by its name in the folder. A log you add with
+      <b>Load log…</b> belongs in that folder: copy it there on your computer too, or the next
+      <b>Open regatta…</b> lists its day but cannot open it.
+    </p>
+    <p class="note">
+      Times are in the regatta file's zone when it names one (<code>zone = "Europe/Paris"</code>),
+      otherwise in this computer's. The side panel says which.
+    </p>
+
+    <h3>2. Set up each race</h3>
+    <p>Click a race under its day, or press its number. Under it:</p>
+    <ul>
+      <li>
+        <b>gun</b> and <b>finish</b>: a "?" means the log proposed it. <b>Confirm</b> accepts it.
+        Or type the time as digits, <code>122002</code> for 12:20:02, and press <kbd>Enter</kbd>;
+        <kbd>Esc</kbd> drops what you typed.
+      </li>
+      <li><b>name</b>: type and press <kbd>Enter</kbd>. <b>×</b> deletes the race, after <b>Yes</b>.</li>
+      <li><b>Start</b> replays the start; each <b>Leg</b> link replays that leg.</li>
+      <li>
+        <b>Course</b>: <b>Confirm</b> the marks and line ends the log proposed, or place them. Pin
+        the cursor where she rounded or where the end was, then click <b>Mark at the boat</b>,
+        <b>Port end at the boat</b> or <b>Starboard end at the boat</b>. <b>Gate…</b> and
+        <b>Finish line…</b> take typed positions, like <code>43 15.120 N 6 42.960 E</code>.
+      </li>
+      <li>
+        <b>New race from the range</b>: drag a range on the strip first; the race runs from its
+        start to its end.
+      </li>
+      <li>
+        <b>Notes</b>, <b>Calibration changes</b> and <b>Sails</b> fold open to list what the day
+        holds, with <b>Note at the cursor…</b>, <b>Calibration change at the cursor…</b> and
+        <b>Sail for the range…</b> to add one.
+      </li>
+    </ul>
+
+    <h3>3. Read the pages</h3>
+    <p>
+      <b>Overview</b>, <b>Speed</b>, <b>Start and course</b>, <b>Tacks and gybes</b>, <b>Wind</b>,
+      <b>Instruments</b> and <b>Regatta</b>. Each reads the range chosen on the strip: a race, a leg,
+      or any stretch you drag. <b>Regatta</b> reads every day of the regatta file and compares the
+      races.
+    </p>
+
+    <h3>4. The wind map</h3>
+    <p>
+      Click <b>Fetch wind map</b> above the map, once per day, then <b>Model wind</b> in the map's
+      legend. The model's wind is drawn under the track. The coastline comes from OpenStreetMap's
+      server, which is often busy: when it does not answer, the side panel says so and the button
+      stays, so click it again a few minutes later. What is fetched stays in the tab until it
+      closes.
+    </p>
+
+    <h3>5. Export</h3>
+    <p>
+      <b>Export PDF…</b> saves every page over the range. <b>Set-up sheet…</b> saves the
+      navigator's set-up sheet: what the log shows of how Expedition was set up, and the steps that
+      fix each fault. Both go to your Downloads folder.
+    </p>
+
+    <h3>6. Save the regatta file</h3>
+    <p>
+      Edits are kept in this tab only. <b>Save regatta file</b> downloads <code>regatta.toml</code>;
+      put it in the regatta's folder in place of the old one. Until you do, the side panel says
+      "Edits not saved: they are in this page alone.", and the browser asks before the tab closes.
+      Opening the same folder again keeps the page's edited regatta file rather than the folder's
+      older copy.
+    </p>
+
+    <h2>Mouse</h2>
+
+    <h3>The strip, across the top</h3>
+    <dl>
+      <dt>Hover</dt>
+      <dd>The cursor follows the pointer on every view. Its label gives the clock and the time since the gun.</dd>
+      <dt>Click</dt>
+      <dd>Pins the cursor there. On a leg in the <b>legs</b> row, or a turn in the <b>turns</b> row, it replays that leg or turn.</dd>
+      <dt>Drag across</dt>
+      <dd>Sets the range.</dd>
+      <dt>Drag a △ at either end of the bottom row</dt>
+      <dd>Moves that end of the range.</dd>
+      <dt>Drag a race's gun or finish line</dt>
+      <dd>Moves it; where you let go is written to the regatta file.</dd>
+      <dt>Double-click</dt>
+      <dd>The whole log.</dd>
+      <dt>Scroll</dt>
+      <dd>Moves the window earlier or later.</dd>
+      <dt>Pinch, or <kbd>Cmd</kbd> + scroll</dt>
+      <dd>Zooms about the pointer.</dd>
+      <dt><b>+</b> and <b>×</b></dt>
+      <dd><b>+</b> adds a lane (type in its box to filter the channels); <b>×</b> removes one. Drag the strip's bottom edge to give the lanes more or less height.</dd>
+      <dt><b>▶</b> and <b>10×</b></dt>
+      <dd><b>▶</b> plays the range and <b>⏸</b> pauses it; <b>10×</b> sets the speed, from 1× to 60×.</dd>
+      <dt>Hover an event, leg, turn or sail</dt>
+      <dd>Says what it is.</dd>
+    </dl>
+
+    <h3>The map</h3>
+    <dl>
+      <dt>Hover near the track</dt>
+      <dd>The cursor goes to that second.</dd>
+      <dt>Click</dt>
+      <dd>Pins the cursor. On a tack's or gybe's mark, replays that turn.</dd>
+      <dt>Drag, or scroll</dt>
+      <dd>Pans.</dd>
+      <dt>Pinch, or <kbd>Cmd</kbd> + scroll</dt>
+      <dd>Zooms about the pointer.</dd>
+      <dt>Double-click</dt>
+      <dd>Fits the map to the range.</dd>
+      <dt><b>Up:</b></dt>
+      <dd>Which way is up: wind, north, start line or course axis.</dd>
+      <dt>Legend buttons</dt>
+      <dd>What colours the track: <b>Speed</b>, <b>Wind direction</b>, <b>% of target</b>, <b>VMC</b>, <b>Tactical</b>, <b>Leg</b>, <b>Model wind</b>.</dd>
+      <dt><b>Measure</b></dt>
+      <dd>Then two clicks on the map: the distance between them in metres and nautical miles, and the true bearing from the first to the second.</dd>
+      <dt><b>Edit course</b></dt>
+      <dd>Drag the start line's ends and the marks; where one is let go is written to the regatta file. A press anywhere else pans.</dd>
+    </dl>
+
+    <h3>The figures on a page</h3>
+    <dl>
+      <dt>Hover</dt>
+      <dd>The value under the pointer; on a time axis the cursor follows.</dd>
+      <dt>Click</dt>
+      <dd>Pins the cursor. On a bar of a ranking of turns, picks that turn out wherever it is drawn. On a race's dot on <b>Regatta</b>, makes that race the range, opening its day's log if needed.</dd>
+      <dt>Drag</dt>
+      <dd>Pans.</dd>
+      <dt>Pinch, or <kbd>Cmd</kbd> + scroll</dt>
+      <dd>Zooms about the pointer.</dd>
+      <dt>Double-click</dt>
+      <dd>Shows it whole again.</dd>
+      <dt>Scroll</dt>
+      <dd>Scrolls the page.</dd>
+    </dl>
+
+    <h2>Keys</h2>
+    <p class="note">
+      Click anywhere on the page first so that it has the keyboard. While you type in a box the keys
+      are the box's.
+    </p>
+    <dl>
+      <dt><kbd>←</kbd> <kbd>→</kbd></dt>
+      <dd>Move the pinned cursor one second. The first press pins it at the start of the range.</dd>
+      <dt><kbd>Cmd</kbd> + <kbd>←</kbd> <kbd>→</kbd></dt>
+      <dd>Ten seconds.</dd>
+      <dt><kbd>Space</kbd></dt>
+      <dd>Play and pause.</dd>
+      <dt><kbd>Esc</kbd></dt>
+      <dd>Stops playback and unpins the cursor.</dd>
+      <dt><kbd>1</kbd> to <kbd>9</kbd></dt>
+      <dd>That race of the day.</dd>
+      <dt><kbd>0</kbd></dt>
+      <dd>The whole log.</dd>
+    </dl>
+  </body>
+</html>

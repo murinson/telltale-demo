@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>Telltale</title>
+    <style>
+      /* Deliberately a colour the app never draws. If any of this magenta is visible, the
+         wasm module did not start or the canvas is transparent — it must be completely
+         covered by egui's panel and the viewport's clear colour. Do not "fix" this by
+         setting it to the viewport colour: that would make a dead canvas look identical
+         to a working one. */
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #7a0033; }
+      /* eframe sizes the canvas itself; it only needs to be told to fill the page. */
+      canvas { display: block; width: 100%; height: 100%; outline: none; }
+      /* Over the canvas while the module downloads and starts, which takes seconds on a first
+         visit; removed once the app runs, or when it fails. */
+      #loading {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font: 18px system-ui, sans-serif; color: #ffd9e3;
+        pointer-events: none;
+      }
+      #error {
+        display: none;
+        position: absolute; inset: 0;
+        padding: 2rem;
+        font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: #ffb4a2; background: #1a0a12; white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="telltale"></canvas>
+    <div id="loading">Loading Telltale…</div>
+    <pre id="error"></pre>
+
+    <script type="module">
+      // Built by scripts/build-web.sh into this directory's sibling `dist/`.
+      import init, { start } from "./gui.js";
+
+      try {
+        await init();
+        await start(document.getElementById("telltale"));
+        document.getElementById("loading").remove();
+      } catch (e) {
+        document.getElementById("loading").remove();
+        // A failure here is almost always one of: WebGPU unavailable in this browser,
+        // or a wasm-bindgen CLI/crate version mismatch. Both are silent otherwise.
+        const box = document.getElementById("error");
+        box.style.display = "block";
+        box.textContent =
+          "Telltale failed to start.\n\n" + (e && e.stack ? e.stack : e) +
+          "\n\nIf this mentions WebGPU: use Chrome or Safari 18+, over http:// or https:// (not file://).";
+        throw e;
+      }
+    </script>
+  </body>
+</html>
